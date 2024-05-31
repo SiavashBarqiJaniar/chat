@@ -83,7 +83,7 @@ with st.sidebar:
     website_url = st.text_input("Website URL")
 
     st.header("Enter your openAI API key")
-    OPENAI_API_KEY = st.text_input()
+    OPENAI_API_KEY = st.text_input("")
 
 
 if website_url is None or website_url=="":
