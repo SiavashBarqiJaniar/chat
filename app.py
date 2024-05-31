@@ -22,7 +22,7 @@ def get_response(user_input):
 
     return response['answer']
 
-def get_vectorstore_from_url(url):
+def get_vectorstore_from_url(url, OPENAI_API_KEY):
     """ get the textin document form"""
     loader = WebBaseLoader(url)
     document = loader.load()
@@ -32,7 +32,7 @@ def get_vectorstore_from_url(url):
     document_chunks = text_splitter.split_documents(document)
 
     # create a vectorstore from the chunks
-    vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings(OPENAI_API_KEY=OPENAI_API_KEY))
+    vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY))
 
     return vector_store
 
@@ -100,7 +100,7 @@ else:
 
         # create conversation chain
         if "vector_store" not in st.session_state:
-            st.session_state.vector_store = get_vectorstore_from_url(website_url)
+            st.session_state.vector_store = get_vectorstore_from_url(website_url, OPENAI_API_KEY)
 
         retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
 
