@@ -84,9 +84,17 @@ with st.sidebar:
 
     OPENAI_API_KEY = st.text_input("Your openAI API key")
 
+valid_api_key = False
+try:
+    llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY)
+    valid_api_key = True
+except:
+    valid_api_key = False
 
 if OPENAI_API_KEY is None or OPENAI_API_KEY=="":
     st.info("Please enter your openAI API key")
+elif not valid_api_key:
+    st.info("Entered openAI API key is not valid!")
 else:
     if website_url is None or website_url=="":
         st.info("Please enter a website URL")
