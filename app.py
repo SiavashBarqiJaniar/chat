@@ -72,7 +72,7 @@ def get_conversational_rag_chain(retriever_chain):
 # app config
 st.set_page_config(page_title="Chat with websites", page_icon="666")
 
-st.title('Ask Questions About Any Webpage!')
+st.title("Welcome To Sia's Chat Bot!\nHere You Can Ask Questions About Any Webpage!")
 
 
 
@@ -82,9 +82,15 @@ with st.sidebar:
     st.header("Enter URL Below")
     website_url = st.text_input("Website URL")
 
+    st.header("Enter your openAI API key")
+    OPENAI_API_KEY = st.text_input()
+
 
 if website_url is None or website_url=="":
     st.info("Please enter a website URL")
+if OPENAI_API_KEY is None or OPENAI_API_KEY=="":
+    st.info("Please enter your openAI API key")
+
 else:
     # session state
     if 'chat_history' not in st.session_state:
