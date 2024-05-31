@@ -37,7 +37,7 @@ def get_vectorstore_from_url(url):
     return vector_store
 
 def get_context_retriever_chain(vector_store):
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(OPENAI_API_KEY=OPENAI_API_KEY)
 
     retriever = vector_store.as_retriever()
 
@@ -55,7 +55,7 @@ def get_context_retriever_chain(vector_store):
 
 def get_conversational_rag_chain(retriever_chain):
     
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(OPENAI_API_KEY=OPENAI_API_KEY)
 
     # three input here: context = retrieved context , chat_history , user input (question)
     prompt = ChatPromptTemplate.from_messages([
@@ -79,11 +79,10 @@ st.title("Welcome To Sia's Chat Bot!\nHere You Can Ask Questions About Any Webpa
 # sidebar
 with st.sidebar:
     # everything here will be shown on sidebar
-    st.header("Enter URL Below")
+    st.header("Enter URL and your openAI API key Below")
     website_url = st.text_input("Website URL")
 
-    st.header("Enter your openAI API key")
-    OPENAI_API_KEY = st.text_input("")
+    OPENAI_API_KEY = st.text_input("Your openAI API key")
 
 
 if OPENAI_API_KEY is None or OPENAI_API_KEY=="":
