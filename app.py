@@ -36,8 +36,8 @@ def get_vectorstore_from_url(url, OPENAI_API_KEY):
 
     return vector_store
 
-def get_context_retriever_chain(vector_store):
-    llm = ChatOpenAI(OPENAI_API_KEY=OPENAI_API_KEY)
+def get_context_retriever_chain(vector_store, OPENAI_API_KEY):
+    llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY)
 
     retriever = vector_store.as_retriever()
 
@@ -53,9 +53,9 @@ def get_context_retriever_chain(vector_store):
 
     return retriever_chain
 
-def get_conversational_rag_chain(retriever_chain):
+def get_conversational_rag_chain(retriever_chain, OPENAI_API_KEY):
     
-    llm = ChatOpenAI(OPENAI_API_KEY=OPENAI_API_KEY)
+    llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY)
 
     # three input here: context = retrieved context , chat_history , user input (question)
     prompt = ChatPromptTemplate.from_messages([
@@ -102,9 +102,9 @@ else:
         if "vector_store" not in st.session_state:
             st.session_state.vector_store = get_vectorstore_from_url(website_url, OPENAI_API_KEY)
 
-        retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
+        retriever_chain = get_context_retriever_chain(st.session_state.vector_store, OPENAI_API_KEY)
 
-        conversation_rag_chain = get_conversational_rag_chain(retriever_chain)
+        conversation_rag_chain = get_conversational_rag_chain(retriever_chain, OPENAI_API_KEY)
 
 
 
