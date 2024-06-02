@@ -85,16 +85,16 @@ with st.sidebar:
     OPENAI_API_KEY = st.text_input("Your openAI API key")
 
 valid_api_key = False
-try:
-    llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY)
-    valid_api_key = True
-except:
-    valid_api_key = False
+# try:
+#     temp = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+#     valid_api_key = True
+# except:
+#     valid_api_key = False
 
 if OPENAI_API_KEY is None or OPENAI_API_KEY=="":
     st.info("Please enter your openAI API key")
-elif not valid_api_key:
-    st.info("Entered openAI API key is not valid!")
+# elif not valid_api_key:
+#     st.info("Entered openAI API key is not valid!")
 else:
     if website_url is None or website_url=="":
         st.info("Please enter a website URL")
@@ -108,39 +108,40 @@ else:
 
         # create conversation chain
         if "vector_store" not in st.session_state:
-            st.session_state.vector_store = get_vectorstore_from_url(website_url, OPENAI_API_KEY)
+            try:
+                st.session_state.vector_store = get_vectorstore_from_url(website_url, OPENAI_API_KEY)
+                valid_api_key = True
+            except:
+                st.info("Entered openAI API key is not valid!")
+                valid_api_key = False
 
-        retriever_chain = get_context_retriever_chain(st.session_state.vector_store, OPENAI_API_KEY)
+        if valid_api_key:
+            retriever_chain = get_context_retriever_chain(st.session_state.vector_store, OPENAI_API_KEY)
 
-        conversation_rag_chain = get_conversational_rag_chain(retriever_chain, OPENAI_API_KEY)
+            conversation_rag_chain = get_conversational_rag_chain(retriever_chain, OPENAI_API_KEY)
 
+            # user input
+            user_query = st.chat_input("Type your message here ..")
+            if user_query is not None and user_query!="":
+                response = get_response(user_query)
 
+                st.session_state.chat_history.append(HumanMessage(content=user_query))
+                st.session_state.chat_history.append(AIMessage(content=response))
 
-        # user input
-        user_query = st.chat_input("Type your message here ..")
-        if user_query is not None and user_query!="":
-            response = get_response(user_query)
-
-            st.session_state.chat_history.append(HumanMessage(content=user_query))
-            st.session_state.chat_history.append(AIMessage(content=response))
-
+                
+                ## Testing the app
+                # chat_history and input variables are going to be replaced
+                # retrieved_documents = retriever_chain.invoke({
+                #     "chat_history": st.session_state.chat_history,
+                #     "input": user_query
+                # })
+                # st.write(retrieved_documents)
             
-            ## Testing the app
-            # chat_history and input variables are going to be replaced
-            # retrieved_documents = retriever_chain.invoke({
-            #     "chat_history": st.session_state.chat_history,
-            #     "input": user_query
-            # })
-            # st.write(retrieved_documents)
-        
-
-
-
-        # conversation
-        for message in st.session_state.chat_history:
-            if isinstance(message, AIMessage):
-                with st.chat_message("AI"):
-                    st.write(message.content)
-            if isinstance(message, HumanMessage):
-                with st.chat_message("Human"):
-                    st.write(message.content)
+            # conversation
+            for message in st.session_state.chat_history:
+                if isinstance(message, AIMessage):
+                    with st.chat_message("AI"):
+                        st.write(message.content)
+                if isinstance(message, HumanMessage):
+                    with st.chat_message("Human"):
+                        st.write(message.content)
